@@ -1,0 +1,111 @@
+## Getting and Cleaning Data Course Project
+## Fille run_analysis
+## Libraries dplyr; library(dplyr); library(plyr); library(tidyr)
+## Required files are in the working directory
+## Files are;
+## "activity_labels.txt", "features.txt", "subject_test.txt"
+## "subject_train.txt", "X_text.txt", "X_train.txt", "y_test.txt", "y_train.txt"
+## Reading the files into R
+y_train <- read.table("y_train.txt")
+y_test <- read.table("y_test.txt")
+subject_train <- read.table("subject_train.txt")
+subject_test <- read.table("subject_test.txt")
+datos_xtrain <- read.table("X_train.txt")
+datos_xtest <- read.table("X_test.txt")
+features <- read.table("features.txt")
+activity_labels <- read.table("activity_labels.txt")
+## Merging the data objects for test and training
+## Merging first the activities and subjects variable (columns) to the data files
+## Merging the train files
+merged_train <- cbind(y_train, datos_xtrain)
+merged_train_final <- cbind(subject_train, merged_train)
+## Merging the test files
+merged_test <- cbind(y_test, datos_xtest)
+merged_test_final <- cbind(subject_test, merged_test)
+## Merging the test and train files the new set has 
+## the subject and activities variables added
+merged_all_final <- rbind(merged_test_final, merged_train_final)
+## Names "subject" and "activity" for the first two columns instead of V1 V1
+colnames(merged_all_final)[1] <- "subject"
+colnames(merged_all_final)[2] <- "activity"
+## Generating the vectors for selecting and naming columns
+numero_var <- vector( mode = "logical", length = 0L)
+## Generating the Logical Vector
+for (i in 1:nrow(features)) {
+numero_var[i] <- grepl("std()", features[i,2], fixed = TRUE) | grepl("mean()", features[i,2], fixed = TRUE)
+ } 
+##
+numero_names <- vector( mode = "logical", length = 0L)
+## Generating the Logical Vector
+for (i in 1:nrow(features)) {
+  numero_names[i] <- grepl("std()", features[i,2], fixed = TRUE) | grepl("mean()", features[i,2], fixed = TRUE)
+}
+## adding to the logical vector two entries "TRUE" for the Subject and Activity Names
+numero_var <- append(numero_var, TRUE, after = 0)
+numero_var <- append(numero_var, TRUE, after = 0)
+##
+## generating the new data frame with only the selected variables.
+merged_all_final <- merged_all_final[, numero_var] 
+##
+## Naming the variables as per the features files
+## Adding the rows to features with the Names "subject" and "entity" 
+## This to match the V2 column in features with the names in the merged file
+##
+features[] <- lapply(features, as.character)
+features <- rbind(c("1", "activity"), features)
+features <- rbind(c("1", "subject"), features)
+##
+features <- features[numero_var, ] 
+## 
+names(merged_all_final) <- features[ ,2]
+##
+## Now updating activities labels)
+merged_all_final1[,2] <- gsub("1", "WALKING", merged_all_final1[,2])
+merged_all_final1[,2] <- gsub("2", "WALKING_UPSTAIRS", merged_all_final1[,2])
+merged_all_final1[,2] <- gsub("3", "WALKING_DOWNSTAIRS", merged_all_final1[,2])
+merged_all_final1[,2] <- gsub("4", "SITTING", merged_all_final1[,2])
+merged_all_final1[,2] <- gsub("5", "STANDING", merged_all_final1[,2])
+merged_all_final1[,2] <- gsub("6", "LAYING", merged_all_final1[,2])
+##
+## Generating a vector with the new names
+nombres <- colnames(merged_all_final)
+nombres <- gsub("tBodyAcc", "timebodyaccelerometer", nombres, ignore.case = TRUE)
+nombres <- gsub("tGravityAcc", "timegravityaccelerometer", nombres, ignore.case = TRUE)
+nombres <- gsub("tBodyGyro", "timebodygyroscope", nombres, ignore.case = TRUE)
+nombres <- gsub("fBodyAcc", "frequencybodyaccelerometer", nombres, ignore.case = TRUE)
+nombres <- gsub("fBodyGyro", "frequencybodygyroscope", nombres, ignore.case = TRUE)
+nombres <- gsub("fBodyBodyGyro", "frequencybodygyroscope", nombres, ignore.case = TRUE)
+nombres <- gsub("fBodyBodyAcc", "frequencybodyaccelerometer", nombres, ignore.case = TRUE)
+nombres <- gsub("Mag", "magnitude", nombres, ignore.case = TRUE)
+## Now updating variables names in the final set
+colnames(merged_all_final) <- nombres
+## Now updating activities labels)
+merged_all_final1[,2] <- gsub("1", "WALKING", merged_all_final1[,2])
+merged_all_final1[,2] <- gsub("2", "WALKING_UPSTAIRS", merged_all_final1[,2])
+merged_all_final1[,2] <- gsub("3", "WALKING_DOWNSTAIRS", merged_all_final1[,2])
+merged_all_final1[,2] <- gsub("4", "SITTING", merged_all_final1[,2])
+merged_all_final1[,2] <- gsub("5", "STANDING", merged_all_final1[,2])
+merged_all_final1[,2] <- gsub("6", "LAYING", merged_all_final1[,2])
+## 
+## Creating a second tidy data set with the average of each variable
+## for each activity and each subject
+rows_tidy <- activity_labels[,2]
+cols_tidy <- colnames(merged_all_final)
+## Eliminating the subject and activity names
+cols_tidy <- cols_tidy[-1]
+cols_tidy <- cols_tidy[-1]
+## creating the new set
+average_tidy <- data.frame()
+for (i in 1:length(rows_tidy))
+{
+  for (j in 1:length(cols_tidy))
+  { 
+    average_tidy[i,j] <- mean(merged_all_final[,j+2], na.rm = TRUE)
+  }
+}
+##
+rownames(average_tidy) <- rows_tidy
+colnames(average_tidy) <- cols_tidy
+##
+## Write the file
+write.table(average_tidy, file = "wearable_computing_tidy_data_set",row.name = FALSE)
