@@ -1,6 +1,6 @@
 The Cleaning and Data Project for week4 of the course Getting and Cleaning Data - resubmission
-Loading the libraries
-Required files are in the working directory
+Loading the libraries.
+Required files are in the working directory.
 The Files are;
  "activity_labels.txt", "features.txt", "subject_test.txt"
  "subject_train.txt", "X_text.txt", "X_train.txt", "y_test.txt", "y_train.txt"
