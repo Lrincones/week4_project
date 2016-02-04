@@ -1,7 +1,6 @@
-## The assignment is incomplete the final file is wrong, could not fixed it before deadline
 ## Getting and Cleaning Data Course Project
-## Fille run_analysis
-## Libraries dplyr; library(dplyr); library(plyr); library(tidyr)
+## Libraries 
+library(dplyr); library(plyr); library(tidyr)
 ## Required files are in the working directory
 ## Files are;
 ## "activity_labels.txt", "features.txt", "subject_test.txt"
@@ -59,14 +58,14 @@ features <- rbind(c("1", "subject"), features)
 features <- features[numero_var, ] 
 ## 
 names(merged_all_final) <- features[ ,2]
-##
+###################
 ## Now updating activities labels)
-merged_all_final1[,2] <- gsub("1", "WALKING", merged_all_final1[,2])
-merged_all_final1[,2] <- gsub("2", "WALKING_UPSTAIRS", merged_all_final1[,2])
-merged_all_final1[,2] <- gsub("3", "WALKING_DOWNSTAIRS", merged_all_final1[,2])
-merged_all_final1[,2] <- gsub("4", "SITTING", merged_all_final1[,2])
-merged_all_final1[,2] <- gsub("5", "STANDING", merged_all_final1[,2])
-merged_all_final1[,2] <- gsub("6", "LAYING", merged_all_final1[,2])
+merged_all_final[,2] <- gsub("1", "WALKING", merged_all_final[,2])
+merged_all_final[,2] <- gsub("2", "WALKING_UPSTAIRS", merged_all_final[,2])
+merged_all_final[,2] <- gsub("3", "WALKING_DOWNSTAIRS", merged_all_final[,2])
+merged_all_final[,2] <- gsub("4", "SITTING", merged_all_final[,2])
+merged_all_final[,2] <- gsub("5", "STANDING", merged_all_final[,2])
+merged_all_final[,2] <- gsub("6", "LAYING", merged_all_final[,2])
 ##
 ## Generating a vector with the new names
 nombres <- colnames(merged_all_final)
@@ -80,33 +79,11 @@ nombres <- gsub("fBodyBodyAcc", "frequencybodyaccelerometer", nombres, ignore.ca
 nombres <- gsub("Mag", "magnitude", nombres, ignore.case = TRUE)
 ## Now updating variables names in the final set
 colnames(merged_all_final) <- nombres
-## Now updating activities labels)
-merged_all_final1[,2] <- gsub("1", "WALKING", merged_all_final1[,2])
-merged_all_final1[,2] <- gsub("2", "WALKING_UPSTAIRS", merged_all_final1[,2])
-merged_all_final1[,2] <- gsub("3", "WALKING_DOWNSTAIRS", merged_all_final1[,2])
-merged_all_final1[,2] <- gsub("4", "SITTING", merged_all_final1[,2])
-merged_all_final1[,2] <- gsub("5", "STANDING", merged_all_final1[,2])
-merged_all_final1[,2] <- gsub("6", "LAYING", merged_all_final1[,2])
 ## 
 ## Creating a second tidy data set with the average of each variable
 ## for each activity and each subject
-rows_tidy <- activity_labels[,2]
-cols_tidy <- colnames(merged_all_final)
-## Eliminating the subject and activity names
-cols_tidy <- cols_tidy[-1]
-cols_tidy <- cols_tidy[-1]
-## creating the new set
 average_tidy <- data.frame()
-for (i in 1:length(rows_tidy))
-{
-  for (j in 1:length(cols_tidy))
-  { 
-    average_tidy[i,j] <- mean(merged_all_final[,j+2], na.rm = TRUE)
-  }
-}
-##
-rownames(average_tidy) <- rows_tidy
-colnames(average_tidy) <- cols_tidy
+average_tidy <-aggregate(. ~subject + activity, merged_all_final, mean)
 ##
 ## Write the file
-write.table(average_tidy, file = "wearable_computing_tidy_data_set",row.name = FALSE)
+write.table(average_tidy, file = "average_tidy_data_set.txt", row.name = FALSE,)
