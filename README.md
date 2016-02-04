@@ -1,4 +1,3 @@
-
 The Cleaning and Data Project for week4 of the course Getting and Cleaning Data - resubmission
 Loading the libraries
 Required files are in the working directory
